@@ -25,6 +25,9 @@ const initialAssets: Assets = {
   images: false,
 };
 
+const SERVICE_URL =
+  "https://www.freelancer.com/service/website_testing/i-will-build-a-responsive-landing-page";
+
 const goalHeadlines: Record<GoalId, string> = {
   enquiries: "Give the right people one clear next step.",
   bookings: "Make the next available date easy to find.",
@@ -120,8 +123,8 @@ export function LandingLab() {
         <nav aria-label="Primary navigation">
           <a href="#scope">Scope</a>
           <a href="#lab">Brief lab</a>
-          <a className="nav-cta" href="#lab">
-            Build the brief
+          <a className="nav-cta" href={SERVICE_URL} target="_blank" rel="noreferrer">
+            Order for $10
           </a>
         </nav>
       </header>
@@ -145,8 +148,8 @@ export function LandingLab() {
               <a className="button button-primary" href="#lab">
                 Shape your page brief <span aria-hidden="true">↘</span>
               </a>
-              <a className="text-link" href="#boundaries">
-                Read the exact boundary
+              <a className="text-link" href={SERVICE_URL} target="_blank" rel="noreferrer">
+                Open the $10 Freelancer offer
               </a>
             </div>
             <ul className="hero-notes" aria-label="Core deliverables">
@@ -594,6 +597,14 @@ export function LandingLab() {
               <p>One small revision</p>
             </div>
           </div>
+          <div className="handoff-actions">
+            <a className="button button-primary" href={SERVICE_URL} target="_blank" rel="noreferrer">
+              Order the scoped build on Freelancer <span aria-hidden="true">→</span>
+            </a>
+            <a className="text-link" href="#boundaries">
+              Review the exact boundary first
+            </a>
+          </div>
         </section>
       </main>
 
@@ -602,7 +613,9 @@ export function LandingLab() {
           por<span>Q</span>pine
         </a>
         <p>Static-first. Scope-tight. Made to be edited.</p>
-        <a href="#top">Back to top ↑</a>
+        <a href={SERVICE_URL} target="_blank" rel="noreferrer">
+          Order for $10 →
+        </a>
       </footer>
     </>
   );

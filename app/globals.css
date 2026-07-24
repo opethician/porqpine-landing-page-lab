@@ -1262,6 +1262,13 @@ a {
   font-weight: 680;
 }
 
+.handoff-actions {
+  display: flex;
+  margin-top: 38px;
+  align-items: center;
+  gap: 24px;
+}
+
 .handoff-arrow {
   font-size: 3rem;
   font-weight: 300;
@@ -1521,6 +1528,11 @@ footer > a:last-child {
   .handoff-grid {
     grid-template-columns: 1fr;
     gap: 16px;
+  }
+
+  .handoff-actions {
+    align-items: flex-start;
+    flex-direction: column;
   }
 
   .handoff-arrow {

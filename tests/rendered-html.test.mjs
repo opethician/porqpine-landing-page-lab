@@ -59,6 +59,11 @@ test("server-renders the finished, accessible landing page", async () => {
   assert.match(html, /One static responsive landing page/);
   assert.match(html, /One small revision/);
   assert.match(html, /Sample content only/);
+  assert.match(html, /Order for \$10/);
+  assert.match(
+    html,
+    /https:\/\/www\.freelancer\.com\/service\/website_testing\/i-will-build-a-responsive-landing-page/,
+  );
   assert.doesNotMatch(html, /testimonial|award-winning|conversion rate|trusted by/i);
   assert.doesNotMatch(html, /codex-preview|react-loading-skeleton|Your site is taking shape/i);
 });
