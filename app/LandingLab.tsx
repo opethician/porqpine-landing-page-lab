@@ -1,6 +1,6 @@
 "use client";
 
-import { FormEvent, useMemo, useState } from "react";
+import { FormEvent, useEffect, useMemo, useRef, useState } from "react";
 import {
   GOALS,
   SCOPE_EXCLUSIONS,
@@ -36,6 +36,63 @@ const goalHeadlines: Record<GoalId, string> = {
   awareness: "Tell the useful part of the story first.",
 };
 
+function formatBriefForClipboard({
+  projectName,
+  audience,
+  goal,
+  ctaLabel,
+  ctaUrl,
+  assets,
+  result,
+}: {
+  projectName: string;
+  audience: string;
+  goal: GoalId;
+  ctaLabel: string;
+  ctaUrl: string;
+  assets: Assets;
+  result: ScopeResult;
+}) {
+  const goalLabel = GOALS.find((item) => item.id === goal)?.label ?? goal;
+  const suppliedAssets = Object.entries(assets)
+    .filter(([, supplied]) => supplied)
+    .map(([asset]) => asset)
+    .join(", ");
+  const lines = [
+    "porQpine landing-page brief",
+    "",
+    `Project: ${projectName}`,
+    `Audience: ${audience}`,
+    `Goal: ${goalLabel}`,
+    `CTA: ${ctaLabel || "Not supplied"}${ctaUrl ? ` — ${ctaUrl}` : ""}`,
+    `Supplied assets: ${suppliedAssets || "None confirmed"}`,
+    "",
+    `Scope result: ${result.readiness.status.replaceAll("-", " ")}`,
+    `Offer: ${result.summary.offer}`,
+    `Price: $${result.summary.priceUsd}`,
+    `Delivery: ${result.summary.delivery}`,
+    `Revision: ${result.summary.revision}`,
+    "",
+    "Page architecture:",
+    ...result.architecture.map(
+      (section) => `${section.order}. ${section.label}: ${section.purpose}`,
+    ),
+  ];
+
+  if (result.missingAssets.length) {
+    lines.push(
+      "",
+      "Still to supply:",
+      ...result.missingAssets.map(
+        (item) => `- ${item.asset}${item.required ? " (required)" : " (optional)"}`,
+      ),
+    );
+  }
+
+  lines.push("", `Service: ${SERVICE_URL}`);
+  return lines.join("\n");
+}
+
 export function LandingLab() {
   const [projectName, setProjectName] = useState("Juniper Ceramics");
   const [audience, setAudience] = useState("Curious beginners looking for a relaxed creative workshop");
@@ -48,11 +105,19 @@ export function LandingLab() {
   const [result, setResult] = useState<ScopeResult | null>(null);
   const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
   const [requestState, setRequestState] = useState<"idle" | "loading" | "success" | "error">("idle");
+  const [copyState, setCopyState] = useState<"idle" | "copied" | "error">("idle");
+  const resultRef = useRef<HTMLDivElement>(null);
 
   const selectedCatalog = useMemo(
     () => sections.map((id) => SECTION_CATALOG.find((item) => item.id === id)!).filter(Boolean),
     [sections],
   );
+
+  useEffect(() => {
+    if (!result || requestState !== "success") return;
+    resultRef.current?.focus({ preventScroll: true });
+    resultRef.current?.scrollIntoView({ block: "nearest" });
+  }, [requestState, result]);
 
   function toggleSection(id: SectionId) {
     setResult(null);
@@ -72,6 +137,7 @@ export function LandingLab() {
     event.preventDefault();
     setRequestState("loading");
     setFieldErrors({});
+    setCopyState("idle");
 
     try {
       const response = await fetch("/api/brief", {
@@ -104,6 +170,27 @@ export function LandingLab() {
       setResult(null);
       setFieldErrors({ brief: "The scope check could not run. Please try again." });
       setRequestState("error");
+    }
+  }
+
+  async function copyBrief() {
+    if (!result) return;
+
+    try {
+      await navigator.clipboard.writeText(
+        formatBriefForClipboard({
+          projectName,
+          audience,
+          goal,
+          ctaLabel,
+          ctaUrl,
+          assets,
+          result,
+        }),
+      );
+      setCopyState("copied");
+    } catch {
+      setCopyState("error");
     }
   }
 
@@ -502,7 +589,13 @@ export function LandingLab() {
             </div>
           </div>
 
-          <div className="result-shell" aria-live="polite" aria-atomic="false">
+          <div
+            className="result-shell"
+            aria-live="polite"
+            aria-atomic="false"
+            ref={resultRef}
+            tabIndex={-1}
+          >
             {requestState === "idle" && (
               <div className="result-empty">
                 <span>OUTPUT</span>
@@ -571,6 +664,24 @@ export function LandingLab() {
                       <p className="all-ready">All listed assets are supplied.</p>
                     )}
                   </div>
+                </div>
+                <div className="result-actions">
+                  <button className="button button-secondary" type="button" onClick={copyBrief}>
+                    {copyState === "copied"
+                      ? "Brief copied"
+                      : copyState === "error"
+                        ? "Copy unavailable"
+                        : "Copy scoped brief"}
+                    <span aria-hidden="true">{copyState === "copied" ? "✓" : "⧉"}</span>
+                  </button>
+                  <a
+                    className="button button-primary"
+                    href={SERVICE_URL}
+                    target="_blank"
+                    rel="noreferrer"
+                  >
+                    Continue on Freelancer <span aria-hidden="true">→</span>
+                  </a>
                 </div>
               </>
             )}

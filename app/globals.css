@@ -231,6 +231,10 @@ a {
   background: var(--acid);
 }
 
+.button-secondary {
+  background: var(--white);
+}
+
 .button:hover:not(:disabled) {
   transform: translate(3px, 3px);
   box-shadow: 1px 1px 0 var(--ink);
@@ -1218,6 +1222,15 @@ a {
   font-size: 0.8rem;
 }
 
+.result-actions {
+  display: flex;
+  padding: 22px 28px;
+  align-items: center;
+  justify-content: flex-end;
+  border-top: 2px solid var(--ink);
+  gap: 14px;
+}
+
 .handoff-section {
   padding: 115px 0 125px;
   border-top: 2px solid var(--ink);
@@ -1523,6 +1536,11 @@ footer > a:last-child {
   .readiness-grid > div:first-child {
     border-right: 0;
     border-bottom: 1.5px solid var(--ink);
+  }
+
+  .result-actions {
+    align-items: stretch;
+    flex-direction: column;
   }
 
   .handoff-grid {
