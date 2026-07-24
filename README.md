@@ -5,6 +5,9 @@ The interface pairs a live desktop/mobile sample preview with a deterministic
 brief endpoint that turns approved inputs into a page architecture and readiness
 check.
 
+The matching [$10 responsive landing-page service](https://www.freelancer.com/service/website_testing/i-will-build-a-responsive-landing-page)
+is live on Freelancer with the same stated scope and exclusions.
+
 ## The truthful $10 offer
 
 Included:
